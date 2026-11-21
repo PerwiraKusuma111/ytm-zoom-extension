@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "YTM Mobile Zoom",
+  "version": "1.0.0",
+  "description": "Auto Zoom 250% khusus YouTube Music, Desktop UA opsional, dan matikan pinch/double-tap zoom",
+  "permissions": [
+    "tabs",
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "https://music.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "bg.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "YTM Mobile Zoom",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://music.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
