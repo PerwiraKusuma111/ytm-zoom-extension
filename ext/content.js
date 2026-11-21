@@ -1,24 +1,31 @@
 (function () {
   'use strict';
 
-  var noZoomEnabled = true;
-  var styleEl = document.createElement('style');
-  styleEl.id = 'ytm-mobile-zoom-style';
+  var host = (location.hostname || '').toLowerCase();
+  if (!host) return;
 
-  function updateStyle() {
-    styleEl.textContent =
-      (noZoomEnabled ? 'html,body,ytmusic-app{touch-action:pan-x pan-y!important}' : '') +
-      '::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}' +
-      '*{scrollbar-width:none!important}';
+  var noZoomEnabled = false;
+  var styleEl = null;
+
+  function applyNoZoom(on) {
+    noZoomEnabled = Boolean(on);
+    if (noZoomEnabled) {
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'smz-nozoom-style';
+        styleEl.textContent =
+          'html,body{touch-action:pan-x pan-y!important}' +
+          '::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}' +
+          '*{scrollbar-width:none!important}';
+      }
+      if (!styleEl.isConnected) (document.head || document.documentElement).appendChild(styleEl);
+    } else if (styleEl && styleEl.isConnected) {
+      styleEl.remove();
+    }
   }
 
-  updateStyle();
-  (document.head || document.documentElement).appendChild(styleEl);
-
   function blockPinch(e) {
-    if (noZoomEnabled && e.touches && e.touches.length > 1) {
-      e.preventDefault();
-    }
+    if (noZoomEnabled && e.touches && e.touches.length > 1) e.preventDefault();
   }
 
   document.addEventListener('touchstart', blockPinch, { passive: false });
@@ -27,16 +34,18 @@
     if (noZoomEnabled) e.preventDefault();
   }, { passive: false });
 
+  function syncFromSites(sites) {
+    var cfg = sites && sites[host];
+    applyNoZoom(Boolean(cfg && cfg.noZoom));
+  }
+
   try {
-    chrome.storage.local.get({ noZoom: true }, function (d) {
-      noZoomEnabled = d.noZoom !== false;
-      updateStyle();
+    chrome.storage.local.get({ sites: null }, function (d) {
+      if (d.sites) syncFromSites(d.sites);
+      else if (host === 'music.youtube.com') applyNoZoom(true);
     });
     chrome.storage.onChanged.addListener(function (changes, area) {
-      if (area === 'local' && changes.noZoom) {
-        noZoomEnabled = changes.noZoom.newValue !== false;
-        updateStyle();
-      }
+      if (area === 'local' && changes.sites) syncFromSites(changes.sites.newValue);
     });
   } catch (e) {}
 })();
