@@ -1,4 +1,4 @@
-# Site Mobile Zoom (v2.1.0)
+# Site Mobile Zoom (v2.1.1)
 
 Ekstensi ringan untuk mengatur **zoom per-website** (tersimpan terpisah untuk tiap domain) di browser Android yang mendukung ekstensi (**Microsoft Edge Canary**, **Quetta**, **Kiwi**, **Mises**, dan **Firefox Android / Nightly / Fennec / Iceraven / Mull**).
 
@@ -9,11 +9,11 @@ Ekstensi ringan untuk mengatur **zoom per-website** (tersimpan terpisah untuk ti
 - **Mode Desktop UA Per-Situs** — ubah User-Agent ke Desktop (Chrome di Chromium, Firefox Desktop di Firefox Android) khusus untuk domain tertentu, jadi opsi Situs Desktop global browser tidak perlu dinyalakan untuk semua web.
 - **Daftar Situs Tersimpan & Reset** — lihat semua domain yang sudah diatur langsung dari popup dan hapus/reset kapan saja ke 100%.
 
-## Download (v2.1.0)
+## Download (v2.1.1)
 - **GitHub Releases:** https://github.com/PerwiraKusuma111/ytm-zoom-extension/releases/latest
-- **Firefox Android / Nightly / Fennec / Iceraven (.xpi):** https://github.com/PerwiraKusuma111/ytm-zoom-extension/raw/v2.1.0/ytm-zoom-firefox.xpi
-- **Edge Canary Android (.crx):** https://github.com/PerwiraKusuma111/ytm-zoom-extension/raw/v2.1.0/ytm-zoom-ext.crx
-- **Quetta / Kiwi / Mises (.zip):** https://github.com/PerwiraKusuma111/ytm-zoom-extension/raw/v2.1.0/ytm-zoom-ext.zip
+- **Firefox Android / Nightly / Fennec / Iceraven (.xpi):** https://github.com/PerwiraKusuma111/ytm-zoom-extension/raw/v2.1.1/ytm-zoom-firefox.xpi
+- **Edge Canary Android (.crx):** https://github.com/PerwiraKusuma111/ytm-zoom-extension/raw/v2.1.1/ytm-zoom-ext.crx
+- **Quetta / Kiwi / Mises (.zip):** https://github.com/PerwiraKusuma111/ytm-zoom-extension/raw/v2.1.1/ytm-zoom-ext.zip
 
 ## Cara Pasang
 1. **Firefox Android (Nightly / Fennec / Iceraven / Mull):** unduh `ytm-zoom-firefox.xpi`, aktifkan Debug menu (ketuk logo Firefox 5x di *Settings -> About Firefox*), lalu pilih **Install extension from file**.

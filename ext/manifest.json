@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Site Mobile Zoom",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Atur zoom per-website (simpan terpisah tiap situs), Desktop UA per-situs, dan kunci anti pinch/double-tap zoom",
   "permissions": [
     "tabs",
