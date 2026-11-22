@@ -1,3 +1,5 @@
+const api = (typeof browser !== 'undefined' && browser.runtime) ? browser : chrome;
+
 const hostLbl = document.getElementById('hostLbl');
 const controls = document.getElementById('controls');
 const rng = document.getElementById('rng');
@@ -13,6 +15,56 @@ const pbtns = Array.from(document.querySelectorAll('.pbtn'));
 
 let curHost = '';
 let sites = {};
+
+function storageGet(defaults) {
+  return new Promise((resolve) => {
+    try {
+      const res = api.storage.local.get(defaults, (d) => resolve(d || defaults));
+      if (res && typeof res.then === 'function') {
+        res.then((d) => resolve(d || defaults), () => resolve(defaults));
+      }
+    } catch (e) {
+      resolve(defaults);
+    }
+  });
+}
+
+function storageSet(obj, cb) {
+  const done = () => { if (cb) cb(); };
+  try {
+    const res = api.storage.local.set(obj, done);
+    if (res && typeof res.then === 'function') {
+      res.then(done, done);
+    }
+  } catch (e) {
+    done();
+  }
+}
+
+function queryTabs(queryInfo) {
+  return new Promise((resolve) => {
+    try {
+      const res = api.tabs.query(queryInfo, (tabs) => resolve(tabs || []));
+      if (res && typeof res.then === 'function') {
+        res.then((tabs) => resolve(tabs || []), () => resolve([]));
+      }
+    } catch (e) {
+      resolve([]);
+    }
+  });
+}
+
+function sendMsg(payload, cb) {
+  const done = () => { if (cb) cb(); };
+  try {
+    const res = api.runtime.sendMessage(payload, done);
+    if (res && typeof res.then === 'function') {
+      res.then(done, done);
+    }
+  } catch (e) {
+    done();
+  }
+}
 
 function getHost(url) {
   try {
@@ -53,8 +105,8 @@ function renderSaved() {
     del.textContent = '×';
     del.onclick = () => {
       delete sites[h];
-      chrome.storage.local.set({ sites }, () => {
-        chrome.runtime.sendMessage({ type: 'APPLY_HOST', host: h, reload: false, reset: true });
+      storageSet({ sites }, () => {
+        sendMsg({ type: 'APPLY_HOST', host: h, reload: false, reset: true });
         if (h === curHost) loadCurrentUI();
         renderSaved();
       });
@@ -75,18 +127,18 @@ function saveCurrent(partial) {
   if (!curHost) return;
   const base = sites[curHost] || { zoom: 1.0, desktopUA: false, noZoom: false };
   sites[curHost] = Object.assign({}, base, partial);
-  chrome.storage.local.set({ sites }, () => {
+  storageSet({ sites }, () => {
     renderSaved();
   });
 }
 
 async function init() {
-  const data = await chrome.storage.local.get({ sites: null });
+  const data = await storageGet({ sites: null });
   sites = (data.sites && typeof data.sites === 'object')
     ? data.sites
     : { 'music.youtube.com': { zoom: 2.5, desktopUA: false, noZoom: true } };
 
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tabs = await queryTabs({ active: true, currentWindow: true });
   const tab = tabs && tabs[0];
   curHost = tab && tab.url ? getHost(tab.url) : '';
 
@@ -135,7 +187,7 @@ deskUA.addEventListener('change', () => {
 
 btnApply.addEventListener('click', () => {
   if (!curHost) return;
-  chrome.runtime.sendMessage({ type: 'APPLY_HOST', host: curHost, reload: true }, () => {
+  sendMsg({ type: 'APPLY_HOST', host: curHost, reload: true }, () => {
     st.textContent = 'Tersimpan untuk ' + curHost;
     setTimeout(() => { st.textContent = ''; }, 2000);
   });
@@ -144,10 +196,10 @@ btnApply.addEventListener('click', () => {
 btnReset.addEventListener('click', () => {
   if (!curHost) return;
   delete sites[curHost];
-  chrome.storage.local.set({ sites }, () => {
+  storageSet({ sites }, () => {
     loadCurrentUI();
     renderSaved();
-    chrome.runtime.sendMessage({ type: 'APPLY_HOST', host: curHost, reload: true, reset: true }, () => {
+    sendMsg({ type: 'APPLY_HOST', host: curHost, reload: true, reset: true }, () => {
       st.textContent = curHost + ' dikembalikan ke 100%';
       setTimeout(() => { st.textContent = ''; }, 2000);
     });

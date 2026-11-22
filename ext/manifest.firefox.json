@@ -1,0 +1,44 @@
+{
+  "manifest_version": 2,
+  "name": "Site Mobile Zoom",
+  "version": "2.1.0",
+  "description": "Atur zoom per-website (simpan terpisah tiap situs), Desktop UA per-situs, dan kunci anti pinch/double-tap zoom",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ytm-zoom-extension@perwirakusuma111.github.io",
+      "strict_min_version": "126.0"
+    },
+    "gecko_android": {
+      "strict_min_version": "126.0"
+    }
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["bg.js"]
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Site Mobile Zoom",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
